@@ -1,11 +1,21 @@
 # Main
 
-A new repository.
+A small collection of browser projects.
 
-## About
+## 🎮 Tic-Tac-Toe
 
-This is the start of the project. More to come.
+A clean, mobile-friendly Tic-Tac-Toe game where you (X) play against the
+computer (O). Built with plain HTML, CSS, and JavaScript in a single file —
+no installs, no dependencies.
 
-## Getting started
+**Features**
+- Touch-friendly board that works great on phones
+- Unbeatable computer opponent (powered by the minimax algorithm)
+- Live scoreboard tracking wins, losses, and ties
+- Winning line highlighted each round
+- "New Game" button to play again
 
-_Notes, setup steps, and usage instructions will go here as the project grows._
+### How to play
+
+Open `index.html` in any web browser. Tap a square to place your X — the
+computer responds automatically. Get three in a row to win!
