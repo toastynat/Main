@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Film Day</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#FBFAF6;--card:#FFFFFF;--ink:#2C2C2A;--muted:#6B6A64;--line:#E6E3DA;--accent:#9B3B2E;--chip:#F1EFE8;--ok:#3B6D11}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:680px;margin:0 auto;padding:24px 16px 80px}
+  h1{font-family:"Newsreader",Georgia,serif;font-weight:500;font-size:30px;margin:0 0 2px}
+  .tag{color:var(--muted);font-size:14px;margin:0 0 20px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+  label{font-size:13px;color:var(--muted)}
+  input[type=password],select,textarea{width:100%;font:inherit;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:6px}
+  textarea{min-height:60px;resize:vertical}
+  .brandpick{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .bp{display:flex;align-items:center;gap:6px;background:var(--chip);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+  .bp input{margin:0}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-top:12px}
+  .row>div{flex:1;min-width:130px}
+  .btn{appearance:none;border:0;border-radius:10px;padding:11px 18px;font:inherit;font-weight:500;cursor:pointer}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.ghost{background:var(--chip);color:var(--ink)}
+  .btn:disabled{opacity:.5}
+  .err{background:#FCEBEB;color:#791F1F;border:1px solid #F09595;border-radius:10px;padding:10px 12px;font-size:13px;margin-top:10px}
+  .loading{color:var(--muted);font-style:italic;font-family:"Newsreader",Georgia,serif}
+  .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 10px}
+  .tab{background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer}
+  .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .tab .ct{opacity:.75;margin-left:4px}
+  .prog{height:6px;background:var(--chip);border-radius:999px;overflow:hidden;margin:4px 0 14px}
+  .prog>div{height:100%;background:var(--ok);width:0;transition:width .3s}
+  .shot{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;align-items:flex-start}
+  .shot.done{opacity:.55}
+  .shot.done .what{text-decoration:line-through}
+  .chk{flex:none;width:24px;height:24px;border-radius:7px;border:1.5px solid var(--line);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px}
+  .chk.on{background:var(--ok);border-color:var(--ok)}
+  .shot .body{flex:1}
+  .type{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;padding:1px 8px;border-radius:999px;display:inline-block}
+  .type.talking{background:#EEEDFE;color:#3C3489}
+  .type.broll{background:#E1F5EE;color:#085041}
+  .what{font-size:15px;margin-top:6px}
+  .say{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 10px;margin-top:8px}
+  .say b{font-weight:500;color:var(--muted);font-size:12px;display:block;margin-bottom:2px}
+  .film{display:inline-block;margin-top:10px;background:var(--accent);color:#fff;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer}
+  .clip{margin-top:8px}
+  .clip video{width:140px;border-radius:8px;display:block}
+  .clip a{font-size:12px;color:var(--accent)}
+  .none{display:none}
+</style>
+</head>
+<body>
+<div id="gate" style="position:fixed;inset:0;background:#FBFAF6;z-index:999;display:flex;align-items:center;justify-content:center;padding:24px">
+  <div style="max-width:300px;width:100%;text-align:center">
+    <div style="font-family:'Newsreader',Georgia,serif;font-size:28px;margin-bottom:8px">Film Day</div>
+    <p style="color:#6B6A64;font-size:14px;margin:0 0 14px">Enter your passcode</p>
+    <input id="gatecode" type="password" autocomplete="off" style="width:100%;font:inherit;border:1px solid #E6E3DA;border-radius:10px;padding:10px 12px" placeholder="passcode">
+    <button id="gatebtn" style="margin-top:10px;width:100%;border:0;border-radius:10px;padding:11px;background:#9B3B2E;color:#fff;font:inherit;font-weight:500;cursor:pointer">Enter</button>
+    <div id="gateerr" style="color:#791F1F;font-size:13px;margin-top:8px"></div>
+  </div>
+</div>
+<div class="wrap">
+  <h1>Film Day</h1>
+  <p class="tag">Build today's shot list, then run down it. Tap Film to open the camera, or tap the box once you have it.</p>
+
+  <div class="panel">
+    <label for="key">Anthropic API key (saved on this device only)</label>
+    <input id="key" type="password" placeholder="sk-ant-...">
+    <div style="margin-top:14px"><label>Which brands are you filming today?</label>
+      <div class="brandpick" id="brandpick"></div>
+    </div>
+    <div class="row">
+      <div><label for="count">Shots per brand</label><select id="count"><option>5</option><option selected>8</option><option>10</option><option>12</option></select></div>
+      <div><label for="model">Engine</label><select id="model"><option value="claude-opus-4-8">Opus 4.8</option><option value="claude-sonnet-4-6">Sonnet 4.6</option><option value="claude-haiku-4-5">Haiku 4.5</option></select></div>
+    </div>
+    <div style="margin-top:12px"><label for="theme">Theme or notes for today (optional)</label>
+      <textarea id="theme" placeholder="e.g. a calm morning routine, or a workbook flat-lay session..."></textarea></div>
+    <div class="row">
+      <button class="btn primary" id="buildBtn">Build shot list</button>
+      <button class="btn ghost none" id="resetBtn">Start a new day</button>
+    </div>
+    <div id="err"></div>
+  </div>
+
+  <div id="out"></div>
+</div>
+
+<script>
+const PASS="overcomer";
+(function gate(){
+  const g=document.getElementById("gate");
+  if(localStorage.getItem("fd_unlocked")==="1"){ g.style.display="none"; return; }
+  const tryUnlock=()=>{ if(document.getElementById("gatecode").value.trim().toLowerCase()===PASS){ localStorage.setItem("fd_unlocked","1"); g.style.display="none"; } else { document.getElementById("gateerr").textContent="Not quite, try again."; } };
+  document.getElementById("gatebtn").onclick=tryUnlock;
+  document.getElementById("gatecode").addEventListener("keydown",e=>{if(e.key==="Enter")tryUnlock();});
+})();
+const BRANDS={
+  personal:{label:"Personal brand",audience:"Women building an intentional, faith-led life and personal brand. Warm, real, honest over polished. She is the face."},
+  renewed:{label:"The Renewed Society",audience:"Women who came through survival mode, doing the inner work. Steady, evidence over hype. The Evidence Method."},
+  mothers:{label:"Young Mothers Club",audience:"Tired young mothers wanting one doable thing and to feel seen. Gentle, never preachy."},
+  spanglish:{label:"Club Spanglish",audience:"Chilean-Kiwi Spanglish audience who want real, funny, relatable life. She is the face, no selling. Code-switching welcome."},
+  hmc:{label:"HMC (shop)",audience:"Mindset and self-improvement people who buy workbooks. Clear, doable, encouraging."},
+  ai:{label:"Overcomers AI",audience:"Small business owners wanting automation to save time. Practical, no jargon, ROI-minded."},
+  futbol:{label:"Futbol.co.nz",audience:"Chilean-Kiwi football fans following the game from New Zealand. Passionate, bilingual, banter."},
+  clomie:{label:"Clomie",audience:"Women hunting affordable Victoria's Secret finds. Excited, body-positive, deal energy."}
+};
+
+const $=s=>document.querySelector(s);
+let LIST=null, DONE={};
+
+(function init(){
+  const bp=$("#brandpick");
+  Object.entries(BRANDS).forEach(([k,v])=>{
+    const id="b_"+k;
+    const el=document.createElement("label"); el.className="bp";
+    el.innerHTML=`<input type="checkbox" value="${k}" id="${id}"> ${v.label}`;
+    bp.appendChild(el);
+  });
+  $("#key").value=localStorage.getItem("pf_apikey")||localStorage.getItem("fd_apikey")||"";
+  const saved=localStorage.getItem("fd_list");
+  if(saved){ LIST=JSON.parse(saved); DONE=JSON.parse(localStorage.getItem("fd_done")||"{}"); render(); $("#resetBtn").classList.remove("none"); }
+})();
+
+$("#key").addEventListener("change",e=>localStorage.setItem("fd_apikey",e.target.value.trim()));
+$("#buildBtn").addEventListener("click",build);
+$("#resetBtn").addEventListener("click",()=>{ if(!confirm("Clear today's shot list and ticks?"))return; LIST=null;DONE={};localStorage.removeItem("fd_list");localStorage.removeItem("fd_done");$("#out").innerHTML="";$("#resetBtn").classList.add("none"); });
+
+function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+const SCHEMA={type:"object",properties:{brands:{type:"array",items:{type:"object",properties:{
+  key:{type:"string"},
+  shots:{type:"array",items:{type:"object",properties:{type:{type:"string"},what:{type:"string"},say:{type:"string"}},required:["type","what","say"],additionalProperties:false}}
+},required:["key","shots"],additionalProperties:false}}},required:["brands"],additionalProperties:false};
+
+async function build(){
+  $("#err").innerHTML="";
+  const key=$("#key").value.trim(); if(!key){$("#err").innerHTML='<div class="err">Add your API key first.</div>';return;}
+  const picked=[...document.querySelectorAll("#brandpick input:checked")].map(i=>i.value);
+  if(!picked.length){$("#err").innerHTML='<div class="err">Pick at least one brand.</div>';return;}
+  const n=$("#count").value, theme=$("#theme").value.trim(), model=$("#model").value;
+  const btn=$("#buildBtn"); btn.disabled=true; const old=btn.textContent; btn.textContent="Building...";
+
+  const brandLines=picked.map(k=>`${k} = ${BRANDS[k].label}: ${BRANDS[k].audience}`).join("\n");
+  const system=`You are a short-form video shoot planner. Plan a filming day. For each brand, produce exactly ${n} shots the creator can film quickly on her phone. Mix roughly half talking-to-camera shots and half b-roll shots.
+
+For a talking shot: type is "talking", what describes the shot (e.g. "you talking to camera, mid-shot"), and say is the exact short line to say, in her real warm voice.
+For a b-roll shot: type is "broll", what is a concrete, easy phone shot (e.g. "close-up of the book you are reading", "slow pan across your desk", "your hand journaling", "you walking, filmed from behind"), and say is an empty string.
+
+Ground every shot in that brand's audience and in the optional theme. Keep talking lines short and postable. Follow these content rules strictly: no em dashes, no emojis, no personal or family names.
+
+Brands:
+${brandLines}
+${theme?("\nTheme for today: "+theme):""}
+
+Return only the JSON object with a brands array; each entry has key and shots.`;
+
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true","content-type":"application/json"},body:JSON.stringify({model,max_tokens:3000,system,messages:[{role:"user",content:"Plan the shoot."}],output_config:Object.assign({format:{type:"json_schema",schema:SCHEMA}},model!=="claude-haiku-4-5"?{effort:"low"}:{})})});
+    if(!res.ok){let m="Request failed ("+res.status+").";try{const j=await res.json();if(j.error?.message)m=j.error.message;}catch(e){} if(res.status===401)m="That API key was not accepted.";throw new Error(m);}
+    const data=await res.json();
+    if(data.stop_reason==="refusal") throw new Error("The model declined. Try different brands or theme.");
+    const raw=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("");
+    LIST=JSON.parse(raw).brands; DONE={};
+    localStorage.setItem("fd_list",JSON.stringify(LIST)); localStorage.setItem("fd_done","{}");
+    render(); $("#resetBtn").classList.remove("none");
+  }catch(err){ $("#err").innerHTML=`<div class="err">${err.message}</div>`; }
+  finally{ btn.disabled=false; btn.textContent=old; }
+}
+
+function isDone(bk,i){return DONE[bk] && DONE[bk][i];}
+function setDone(bk,i,v){ DONE[bk]=DONE[bk]||{}; if(v)DONE[bk][i]=true; else delete DONE[bk][i]; localStorage.setItem("fd_done",JSON.stringify(DONE)); updateProg(); }
+function brandCounts(b){ const t=b.shots.length; let d=0; for(let i=0;i<t;i++) if(isDone(b.key,i))d++; return [d,t]; }
+
+let active=0;
+function render(){
+  const out=$("#out"); out.innerHTML="";
+  const tabs=document.createElement("div"); tabs.className="tabs";
+  LIST.forEach((b,bi)=>{ const t=document.createElement("button"); t.className="tab"+(bi===active?" active":""); const[d,tot]=brandCounts(b);
+    t.innerHTML=`${esc(BRANDS[b.key]?.label||b.key)}<span class="ct">${d}/${tot}</span>`; t.onclick=()=>{active=bi;render();}; tabs.appendChild(t); });
+  out.appendChild(tabs);
+  const prog=document.createElement("div"); prog.className="prog"; prog.innerHTML='<div id="pbar"></div>'; out.appendChild(prog);
+  const b=LIST[active];
+  b.shots.forEach((s,i)=>{
+    const row=document.createElement("div"); row.className="shot"+(isDone(b.key,i)?" done":"");
+    const sayHtml = (s.type==="talking" && s.say) ? `<div class="say"><b>Say</b>${esc(s.say)}</div>` : "";
+    row.innerHTML=`<div class="chk ${isDone(b.key,i)?"on":""}">${isDone(b.key,i)?"&#10003;":""}</div>
+      <div class="body"><span class="type ${s.type==="talking"?"talking":"broll"}">${s.type==="talking"?"talking":"b-roll"}</span>
+      <div class="what">${esc(s.what)}</div>${sayHtml}
+      <label class="film">Film<input type="file" accept="video/*" capture="environment" hidden></label>
+      <div class="clip"></div></div>`;
+    const chk=row.querySelector(".chk");
+    chk.onclick=()=>{ const nv=!isDone(b.key,i); setDone(b.key,i,nv); render(); };
+    const inp=row.querySelector(".film input");
+    inp.onchange=()=>{ const f=inp.files[0]; if(!f)return; setDone(b.key,i,true);
+      const url=URL.createObjectURL(f); const clip=row.querySelector(".clip");
+      clip.innerHTML=`<video src="${url}" controls playsinline></video><a href="${url}" download="${b.key}-shot-${i+1}.mp4">Save this clip</a>`;
+      render(); };
+    out.appendChild(row);
+  });
+  updateProg();
+}
+function updateProg(){ if(!LIST)return; const b=LIST[active]; if(!b)return; const[d,t]=brandCounts(b); const bar=$("#pbar"); if(bar)bar.style.width=(t?Math.round(d/t*100):0)+"%";
+  document.querySelectorAll(".tab").forEach((tb,bi)=>{ const[dd,tt]=brandCounts(LIST[bi]); const sp=tb.querySelector(".ct"); if(sp)sp.textContent=dd+"/"+tt; }); }
+</script>
+</body>
+</html>
