@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snip — auto-cut silences &amp; caption your videos</title>
+  <meta name="description" content="Cut the silent gaps out of a video and generate captions — right in your browser, on your phone or laptop. Nothing is uploaded." />
+  <!-- Makes the in-browser video engine work on GitHub Pages (sets the headers it needs). -->
+  <script src="coi-serviceworker.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <h1>✂️ Snip</h1>
+      <p class="tagline">Drop in a video. It trims out the silent gaps and writes captions for you — all on this device. Nothing gets uploaded.</p>
+    </header>
+
+    <!-- Step 1: pick a file -->
+    <section id="picker" class="card drop" aria-label="Choose a video">
+      <input id="file" type="file" accept="video/*" hidden />
+      <button id="pickBtn" class="big-btn" type="button">Choose a video</button>
+      <p class="hint">or drag &amp; drop a file here · best with clips under a few minutes</p>
+    </section>
+
+    <!-- Step 2: settings + run -->
+    <section id="setup" class="card hidden" aria-label="Settings">
+      <video id="preview" class="preview" controls playsinline></video>
+      <p id="fileMeta" class="meta"></p>
+
+      <details class="opts">
+        <summary>Options</summary>
+        <label class="row">
+          <span>Captions</span>
+          <input id="doCaptions" type="checkbox" checked />
+        </label>
+        <label class="row">
+          <span>Cut silences</span>
+          <input id="doCut" type="checkbox" checked />
+        </label>
+        <label class="row">
+          <span>How quiet counts as "silence" <small id="threshLabel">(−35 dB)</small></span>
+          <input id="thresh" type="range" min="-60" max="-20" value="-35" />
+        </label>
+        <label class="row">
+          <span>Shortest gap to cut <small id="gapLabel">(0.4 s)</small></span>
+          <input id="gap" type="range" min="200" max="2000" step="100" value="400" />
+        </label>
+        <label class="row">
+          <span>Caption model <small>(tiny = fast, base = more accurate)</small></span>
+          <select id="model">
+            <option value="onnx-community/whisper-tiny.en">tiny · English · fastest</option>
+            <option value="onnx-community/whisper-base.en">base · English · better</option>
+            <option value="onnx-community/whisper-tiny">tiny · any language</option>
+          </select>
+        </label>
+      </details>
+
+      <button id="runBtn" class="big-btn" type="button">Make my video</button>
+      <button id="resetBtn" class="link-btn" type="button">Pick a different file</button>
+    </section>
+
+    <!-- Step 3: progress -->
+    <section id="progress" class="card hidden" aria-label="Working">
+      <p id="stage" class="stage">Getting ready…</p>
+      <div class="bar"><div id="barFill" class="bar-fill"></div></div>
+      <p id="detail" class="detail"></p>
+    </section>
+
+    <!-- Step 4: results -->
+    <section id="results" class="card hidden" aria-label="Results">
+      <h2>Done! 🎉</h2>
+      <video id="resultVideo" class="preview" controls playsinline></video>
+      <div class="downloads">
+        <a id="dlVideo" class="big-btn" download>Download trimmed video</a>
+        <a id="dlSrt" class="big-btn alt" download>Download captions (.srt)</a>
+      </div>
+      <p id="summary" class="meta"></p>
+      <details class="opts">
+        <summary>Transcript</summary>
+        <div id="transcript" class="transcript"></div>
+      </details>
+      <button id="againBtn" class="link-btn" type="button">Do another video</button>
+    </section>
+
+    <p id="error" class="error hidden"></p>
+
+    <footer class="foot">
+      <p>Everything runs in your browser. Your video never leaves your device. ·
+        <a href="README.md">How it works</a></p>
+    </footer>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
