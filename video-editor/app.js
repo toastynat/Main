@@ -14,6 +14,22 @@ import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transfo
 
 // Let transformers.js download models from the Hugging Face hub.
 env.allowLocalModels = false;
+// Run the AI engine directly on this page instead of in a separate background
+// helper. The helper has to be loaded from the CDN's web address, which the
+// browser blocks as "cross-origin" — running inline avoids that entirely.
+if (env.backends?.onnx?.wasm) {
+  env.backends.onnx.wasm.proxy = false;
+  env.backends.onnx.wasm.numThreads = 1;
+}
+
+// If an earlier version of this app registered a helper service worker, clear
+// it out — we don't use one anymore, and a stale one can break things.
+if (navigator.serviceWorker) {
+  navigator.serviceWorker
+    .getRegistrations()
+    .then((regs) => regs.forEach((r) => r.unregister()))
+    .catch(() => {});
+}
 
 // ---- tiny DOM helpers --------------------------------------------------
 const $ = (id) => document.getElementById(id);
@@ -327,11 +343,12 @@ async function loadFFmpeg() {
   ffmpeg.on("progress", ({ progress }) => {
     if (progress >= 0 && progress <= 1) setProgress(0.7 + 0.28 * progress);
   });
-  const base = "https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt@0.12.6/dist/esm";
+  // Single-threaded core: a bit slower, but works without the special
+  // "cross-origin isolation" mode that conflicts with the AI engine.
+  const base = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm";
   await ffmpeg.load({
     coreURL: await toBlobURL(`${base}/ffmpeg-core.js`, "text/javascript"),
     wasmURL: await toBlobURL(`${base}/ffmpeg-core.wasm`, "application/wasm"),
-    workerURL: await toBlobURL(`${base}/ffmpeg-core.worker.js`, "text/javascript"),
   });
   return ffmpeg;
 }
