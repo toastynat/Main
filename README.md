@@ -19,3 +19,11 @@ no installs, no dependencies.
 
 Open `index.html` in any web browser. Tap a square to place your X — the
 computer responds automatically. Get three in a row to win!
+
+## ✂️ Snip — video silence-cutter & captioner
+
+Drop in a video and Snip trims out the silent gaps and writes captions for
+you. Everything runs **inside the browser** — on your phone or laptop — so
+nothing is uploaded, there's nothing to install, and it's free.
+
+See [`video-editor/`](video-editor/) for the app and full instructions.
